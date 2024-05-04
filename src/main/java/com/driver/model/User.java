@@ -1,6 +1,7 @@
 package com.driver.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -8,22 +9,46 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String username;
     private String password;
     private String originalIp;
-    private Boolean connected;
     private String maskedIp;
 
-    @JoinColumn
+
+    private Boolean connected;
+
     @ManyToMany
-    private List<ServiceProvider> serviceProviderList;
+    @JoinColumn
+    List<ServiceProvider> serviceProviderList;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Country originalCountry; //This field remains unaffected even when vpn connection is made
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    List<Connection> connectionList;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Connection> connectionList;
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    Country originalCountry;
+
+    public User() {
+
+    }
+
+    public User(int id, String username, String password, String originalIp, Boolean connected, List<ServiceProvider> serviceProviderList, List<Connection> connectionList, Country country,String maskedIp) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.originalIp = originalIp;
+        this.connected = connected;
+        this.serviceProviderList = serviceProviderList;
+        this.connectionList = connectionList;
+        this.originalCountry = country;
+        this.maskedIp=maskedIp;
+    }
+    public String getMaskedIp() {
+        return maskedIp;
+    }
+
+    public void setMaskedIp(String maskedIp) {
+        this.maskedIp = maskedIp;
+    }
 
     public int getId() {
         return id;
@@ -61,16 +86,8 @@ public class User {
         return connected;
     }
 
-    public void setConnected(Boolean connected) {
+    public void setConnected(boolean connected) {
         this.connected = connected;
-    }
-
-    public String getMaskedIp() {
-        return maskedIp;
-    }
-
-    public void setMaskedIp(String maskedIp) {
-        this.maskedIp = maskedIp;
     }
 
     public List<ServiceProvider> getServiceProviderList() {
@@ -81,19 +98,19 @@ public class User {
         this.serviceProviderList = serviceProviderList;
     }
 
-    public Country getOriginalCountry() {
-        return originalCountry;
-    }
-
-    public void setOriginalCountry(Country originalCountry) {
-        this.originalCountry = originalCountry;
-    }
-
     public List<Connection> getConnectionList() {
         return connectionList;
     }
 
     public void setConnectionList(List<Connection> connectionList) {
         this.connectionList = connectionList;
+    }
+
+    public Country getOriginalCountry() {
+        return originalCountry;
+    }
+
+    public void setOriginalCountry(Country originalCountry) {
+        this.originalCountry = originalCountry;
     }
 }
